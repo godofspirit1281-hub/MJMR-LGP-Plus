@@ -1,0 +1,59 @@
+
+name: Update Tools
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - "**/mise.toml"
+      - "**/.mise.toml"
+      - "**/.tool-versions"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-tools
+  cancel-in-progress: false
+
+jobs:
+  update_golang:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Update Golang
+        uses: knu/update-tools@v3
+        with:
+          tool: golang
+          constraint: "1"
+          release_url: https://go.dev/doc/devel/release
+
+  update_buf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Update Buf
+        uses: knu/update-tools@v3
+        with:
+          tool: buf
+          constraint: "1"
+          release_url: https://github.com/bufbuild/buf/releases
+
+  update_node_in_frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Update Node.js
+        uses: knu/update-tools@v3
+        with:
+          tool: node
+          constraint: "24"
+          directory: frontend
+          release_url: https://nodejs.org/en/about/previous-releases
